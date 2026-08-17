@@ -1,0 +1,31 @@
+# Bog'liqliklar
+node_modules/
+.pnp
+.pnp.js
+
+# Next.js
+.next/
+out/
+build/
+dist/
+
+# Muhit o'zgaruvchilari — hech qachon commit qilinmaydi
+.env
+.env.local
+.env.*.local
+
+# Loglar
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Operatsion tizim va muharrirlar
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Prisma lokal bazasi
+prisma/*.db
+prisma/*.db-journal

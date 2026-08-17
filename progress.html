@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="uz" data-theme="auto">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rent — progress</title>
+<style>
+  :root {
+    --surface-1: #fcfcfb;
+    --plane: #f9f9f7;
+    --text-primary: #0b0b0b;
+    --text-secondary: #52514e;
+    --text-muted: #898781;
+    --grid: #e1e0d9;
+    --baseline: #c3c2b7;
+    --border: rgba(11,11,11,0.10);
+    --accent: #2a78d6;
+    --track: #e1e0d9;
+    --good: #0ca30c;
+    --warning: #fab219;
+    --good-text: #006300;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:where(:not([data-theme="light"])) {
+      --surface-1: #1a1a19;
+      --plane: #0d0d0d;
+      --text-primary: #ffffff;
+      --text-secondary: #c3c2b7;
+      --text-muted: #898781;
+      --grid: #2c2c2a;
+      --baseline: #383835;
+      --border: rgba(255,255,255,0.10);
+      --accent: #3987e5;
+      --track: #2c2c2a;
+      --good: #0ca30c;
+      --warning: #fab219;
+      --good-text: #0ca30c;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --surface-1: #1a1a19;
+    --plane: #0d0d0d;
+    --text-primary: #ffffff;
+    --text-secondary: #c3c2b7;
+    --text-muted: #898781;
+    --grid: #2c2c2a;
+    --baseline: #383835;
+    --border: rgba(255,255,255,0.10);
+    --accent: #3987e5;
+    --track: #2c2c2a;
+    --good: #0ca30c;
+    --warning: #fab219;
+    --good-text: #0ca30c;
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 32px 20px 64px;
+    background: var(--plane);
+    color: var(--text-primary);
+    font: 15px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  .sahifa { max-width: 1040px; margin: 0 auto; }
+
+  header.bosh { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 28px; }
+  h1 { margin: 0; font-size: 22px; font-weight: 600; letter-spacing: -0.01em; }
+  .bosh__izoh { margin: 4px 0 0; color: var(--text-secondary); font-size: 13px; }
+  .tugma {
+    border: 1px solid var(--border); background: var(--surface-1); color: var(--text-secondary);
+    border-radius: 8px; padding: 7px 12px; font: inherit; font-size: 13px; cursor: pointer;
+  }
+  .tugma:hover { color: var(--text-primary); }
+
+  .qahramon {
+    background: var(--surface-1); border: 1px solid var(--border); border-radius: 14px;
+    padding: 24px; margin-bottom: 16px;
+  }
+  .qahramon__label { color: var(--text-secondary); font-size: 13px; margin-bottom: 6px; }
+  .qahramon__raqam { font-size: 56px; font-weight: 600; line-height: 1; letter-spacing: -0.02em; }
+  .qahramon__izoh { color: var(--text-secondary); font-size: 13px; margin-top: 8px; }
+  .qahramon .meter { margin-top: 16px; }
+
+  .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 28px; }
+  .tile { background: var(--surface-1); border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
+  .tile__label { color: var(--text-secondary); font-size: 12px; }
+  .tile__value { font-size: 28px; font-weight: 600; line-height: 1.2; margin-top: 2px; }
+  .tile__note { color: var(--text-muted); font-size: 12px; margin-top: 2px; }
+
+  h2 { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em;
+       color: var(--text-muted); margin: 32px 0 12px; }
+
+  .meter { width: 100%; }
+  .meter__track { height: 10px; background: var(--track); border-radius: 5px; overflow: hidden; }
+  .meter__fill { height: 100%; background: var(--accent); border-radius: 0 4px 4px 0; transition: width .2s; }
+  .meter__fill--yakunlandi { background: var(--good); border-radius: 5px; }
+  .meter__fill--boshlanmagan { background: transparent; }
+
+  .kartochka {
+    background: var(--surface-1); border: 1px solid var(--border); border-radius: 14px;
+    padding: 20px; margin-bottom: 12px;
+  }
+  .kartochka--yakunlandi { border-left: 3px solid var(--good); }
+  .kartochka--jarayonda { border-left: 3px solid var(--accent); }
+  .kartochka__bosh { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+  .kartochka__nom { margin: 0; font-size: 16px; font-weight: 600; }
+  .kartochka__savol { margin: 2px 0 0; color: var(--text-secondary); font-size: 13px; }
+  .kartochka__maqsad { margin: 12px 0 14px; color: var(--text-secondary); font-size: 13px; }
+  .kartochka__olcham { display: grid; grid-template-columns: 1fr auto auto; align-items: center; gap: 12px; }
+  .kartochka__foiz { font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .kartochka__nisbat { color: var(--text-muted); font-size: 12px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .kartochka__oyoq { display: flex; align-items: center; justify-content: space-between; gap: 12px;
+                     margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--grid); }
+  .fayl { color: var(--text-muted); font-size: 12px; font-family: ui-monospace, "SF Mono", Menlo, monospace; }
+
+  .tasklar { list-style: none; margin: 14px 0 0; padding: 0; }
+  .task { display: flex; align-items: flex-start; gap: 10px; padding: 5px 0; font-size: 14px; }
+  .task__box {
+    flex: none; width: 16px; height: 16px; margin-top: 2px; border-radius: 4px;
+    border: 1.5px solid var(--baseline); display: grid; place-items: center; color: #fff;
+  }
+  .task--done .task__box { background: var(--good); border-color: var(--good); }
+  .task--done .task__text { color: var(--text-muted); text-decoration: line-through; }
+  .task__box svg { width: 11px; height: 11px; }
+
+  .chip, .rozetka {
+    display: inline-flex; align-items: center; gap: 6px; white-space: nowrap;
+    border-radius: 999px; padding: 4px 10px; font-size: 12px; font-weight: 500;
+    border: 1px solid var(--border); color: var(--text-secondary); background: var(--plane);
+  }
+  .chip svg, .rozetka svg { width: 13px; height: 13px; flex: none; }
+  .chip--yakunlandi, .rozetka--good { color: var(--good-text); }
+  .chip--jarayonda { color: var(--accent); }
+  .chip--boshlanmagan, .rozetka--muted { color: var(--text-muted); }
+
+  .hisobot { margin-top: 14px; padding: 12px 14px; background: var(--plane); border-radius: 10px; border: 1px solid var(--grid); }
+  .hisobot__sarlavha { font-size: 12px; font-weight: 600; color: var(--text-muted);
+                       text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
+  .hisobot pre { margin: 0; white-space: pre-wrap; font: inherit; font-size: 13px; color: var(--text-secondary); }
+
+  .savollar { list-style: none; margin: 0; padding: 0; background: var(--surface-1);
+              border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+  .savol { display: grid; grid-template-columns: 28px 1fr auto; gap: 12px; align-items: baseline;
+           padding: 12px 16px; border-bottom: 1px solid var(--grid); font-size: 14px; }
+  .savol:last-child { border-bottom: 0; }
+  .savol__raqam { color: var(--text-muted); font-variant-numeric: tabular-nums; }
+  .savol__qachon { color: var(--text-muted); font-size: 12px; white-space: nowrap; }
+
+  table { width: 100%; border-collapse: collapse; background: var(--surface-1);
+          border: 1px solid var(--border); border-radius: 12px; overflow: hidden; font-size: 13px; }
+  th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--grid); }
+  th { color: var(--text-muted); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; }
+  tr:last-child td { border-bottom: 0; }
+  td.raqam, th.raqam { text-align: right; font-variant-numeric: tabular-nums; }
+
+  footer.oyoq { margin-top: 32px; color: var(--text-muted); font-size: 12px; text-align: center; }
+  details summary { cursor: pointer; color: var(--text-secondary); font-size: 13px; }
+
+  @media (max-width: 620px) {
+    .kartochka__olcham { grid-template-columns: 1fr; }
+    .savol { grid-template-columns: 24px 1fr; }
+    .savol__qachon { grid-column: 2; }
+  }
+</style>
+</head>
+<body>
+<div class="sahifa">
+
+  <header class="bosh">
+    <div>
+      <h1>Rent — sprint progressi</h1>
+      <p class="bosh__izoh">Yangilandi: 2026-08-17 09:47 UTC</p>
+    </div>
+    <button class="tugma" id="mavzu" type="button">Mavzu</button>
+  </header>
+
+  <section class="qahramon">
+    <div class="qahramon__label">Umumiy bajarilish</div>
+    <div class="qahramon__raqam">0%</div>
+    <div class="qahramon__izoh">0 / 41 task bajarildi · joriy: SPRINT 1 — kesim</div>
+    <div class="meter" role="img" aria-label="Umumiy bajarilish 0 foiz">
+          <div class="meter__track"><div class="meter__fill meter__fill--jarayonda" style="width:0%"></div></div>
+        </div>
+  </section>
+
+  <div class="tiles">
+    <div class="tile">
+        <div class="tile__label">Sprintlar</div>
+        <div class="tile__value">6</div>
+        <div class="tile__note">magistral bo‘yicha</div>
+      </div>
+    <div class="tile">
+        <div class="tile__label">Yakunlangan sprint</div>
+        <div class="tile__value">0</div>
+        <div class="tile__note">6 tadan</div>
+      </div>
+    <div class="tile">
+        <div class="tile__label">Bajarilgan task</div>
+        <div class="tile__value">0</div>
+        <div class="tile__note">41 tadan</div>
+      </div>
+    <div class="tile">
+        <div class="tile__label">Yozilgan hisobot</div>
+        <div class="tile__value">0</div>
+        <div class="tile__note">6 tadan</div>
+      </div>
+    <div class="tile">
+        <div class="tile__label">Ochiq savol</div>
+        <div class="tile__value">5</div>
+        <div class="tile__note">PRD 9-bo‘lim</div>
+      </div>
+  </div>
+
+  <h2>Sprintlar</h2>
+<article class="kartochka kartochka--boshlanmagan">
+        <header class="kartochka__bosh">
+          <div>
+            <h3 class="kartochka__nom">SPRINT 1 — kesim</h3>
+            <p class="kartochka__savol">Ishlaydimi?</p>
+          </div>
+          <span class="chip chip--boshlanmagan"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="2.5 2.5"/></svg> Boshlanmagan</span>
+        </header>
+
+        <p class="kartochka__maqsad">yurak amalni — bron qilishni — boshidan oxirigacha bitta vertikal kesimda ishlatib ko'rish: ekran, mantiq, saqlash, jonli.</p>
+
+        <div class="kartochka__olcham" title="0 / 6 task bajarildi">
+          <div class="meter" role="img" aria-label="SPRINT 1 — kesim: 0 foiz bajarildi">
+          <div class="meter__track"><div class="meter__fill meter__fill--boshlanmagan" style="width:0%"></div></div>
+        </div>
+          <span class="kartochka__foiz">0%</span>
+          <span class="kartochka__nisbat">0 / 6 task</span>
+        </div>
+
+        <ul class="tasklar">
+<li class="task ">
+              <span class="task__box" aria-hidden="true"></span>
+              <span class="task__text">jihozlar jadvali minimal maydonlar bilan (nomi, kunlik narxi, soni) + 4 ta seed yozuv: plastik stul, banket stol, chodir 5x10, kolonka</span>
+            </li>
+<li class="task ">
+              <span class="task__box" aria-hidden="true"></span>
+              <span class="task__text">Bosh sahifa — jihozlar ro'yxati kartochka ko'rinishida (rasm o'rniga vaqtincha to'ldirgich)</span>
+            </li>
+<li class="task ">
+              <span class="task__box" aria-hidden="true"></span>
+              <span class="task__text">Jihoz detal sahifasi: sana tanlash va soni kiritish formasi, tekshiruvsiz</span>
+            </li>
+<li class="task ">
+              <span class="task__box" aria-hidden="true"></span>
+              <span class="task__text">Bron yaratish API yo'li: POST /api/bronlar — jihoz id, sana va sonni qabul qiladi, bazaga yozadi</span>
+            </li>
+<li class="task ">
+              <span class="task__box" aria-hidden="true"></span>
+              <span class="task__text">Tasdiq ekrani: &quot;So'rovingiz qabul qilindi&quot; + bron raqami</span>
+            </li>
+<li class="task ">
+              <span class="task__box" aria-hidden="true"></span>
+              <span class="task__text">Hetzner serverida o'z domenida jonli chiqarish (Caddy bilan HTTPS)</span>
+            </li>
+        </ul>
+
+        <footer class="kartochka__oyoq">
+          <span class="rozetka rozetka--muted"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="2.5 2.5"/></svg> Hisobot yo'q</span>
+          <span class="fayl">sprints/SPRINT-1-kesim.md</span>
+        </footer>
+        
+        
+      </article>
+<article class="kartochka kartochka--boshlanmagan">
+        <header class="kartochka__bosh">
+          <div>
+            <h3 class="kartochka__nom">SPRINT 2 — xotira</h3>
+            <p class="kartochka__savol">Eslab qoladimi?</p>
+          </div>
+          <span class="chip chip--boshlanmagan"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="2.5 2.5"/></svg> Boshlanmagan</span>
+        </header>
+
+        <p class="kartochka__maqsad">ma'lumot modelini PRD'dagi to'liq holatga keltirish va katalogni jonli qidiriladigan qilish.</p>
+
+        <div class="kartochka__olcham" title="0 / 6 task bajarildi">
+          <div class="meter" role="img" aria-label="SPRINT 2 — xotira: 0 foiz bajarildi">
+          <div class="meter__track"><div class="meter__fill meter__fill--boshlanmagan" style="width:0%"></div></div>
+        </div>
+          <span class="kartochka__foiz">0%</span>
+          <span class="kartochka__nisbat">0 / 6 task</span>
+        </div>
+
+        <ul class="tasklar">
+<li class="task ">
+              <span class="task__box" aria-hidden="true"></span>
+              <span class="task__text">Migratsiya: turkumlar, foydalanuvchilar, egalar, bron_qatorlari, elon_sorovlari, izohlar jadvallari qo'shiladi — S1 yozuvlari omon qoladi</span>
+            </li>
+<li class="task ">
+              <span class="task__box" aria-hidden="true"></span>
+              <span class="task__text">Bog'lanishlar: jihoz -&gt; ega, jihoz -&gt; turkum, bron -&gt; bron qatorlari</span>
+            </li>
+<li class="task ">
+              <span class="task__box" aria-hidden="true"></span>
+              <span class="task__text">Savat: turli egalardan olingan jihozlar bitta bronga yig'iladi (bron_qatorlari orqali)</span>
+            </li>
+<li class="task ">
+              <span class="task__box" aria-hidden="true"></span>
+              <span class="task__text">Jihoz rasmlarini yuklash va omborga saqlash, kartochkada asosiy foto</span>
+            </li>
+<li class="task ">
+              <span class="task__box" aria-hidden="true"></span>
+              <span class="task__text">Katalog filtri: turkum, narx oralig'i va Toshkent tumani bo'yicha + narx bo'yicha saralash</span>
+            </li>
+<li class="task ">
+              <span class="task__box" aria-hidden="true"></span>
+              <span class="task__text">Turkumlar ro'yxatini seed bilan to'ldirish (stul, stol, chodir, ovoz, yoritish, sahna, generator, idish-tovoq, dekoratsiya)</span>
+            </li>
+        </ul>
+
+        <footer class="kartochka__oyoq">
+          <span class="rozetka rozetka--muted"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="2.5 2.5"/></svg> Hisobot yo'q</span>
+          <span class="fayl">sprints/SPRINT-2-xotira.md</span>
+        </footer>
+        
+        
+      </article>
+<article class="kartochka kartochka--boshlanmagan">
+        <header class="kartochka__bosh">
+          <div>
+            <h3 class="kartochka__nom">SPRINT 3 — auth</h3>
+            <p class="kartochka__savol">Kim kirdi?</p>
+          </div>
+          <span class="chip chip--boshlanmagan"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="2.5 2.5"/></svg> Boshlanmagan</span>
+        </header>
+
+        <p class="kartochka__maqsad">foydalanuvchi telefon raqami bilan kirsin va har rol faqat o'ziga tegishlisini ko'rsin.</p>
+
+        <div class="kartochka__olcham" title="0 / 7 task bajarildi">
+          <div class="meter" role="img" aria-label="SPRINT 3 — auth: 0 foiz bajarildi">
+          <div class="meter__track"><div class="meter__fill meter__fill--boshlanmagan" style="width:0%"></div></div>
+        </div>
+          <span class="kartochka__foiz">0%</span>
+          <span class="kartochka__nisbat">0 / 7 task</span>
+        </div>
+
+        <ul class="tasklar">
+<li class="task ">
+              <span class="task__box" aria-hidden="true"></span>
+              <span class="task__text">Telefon + bir martalik SMS kod (OTP) bilan kirish oqimi</span>
+            </li>
+<li class="task ">
+              <span class="task__box" aria-hidden="true"></span>
+              <span class="task__text">Sessiya saqlanishi — brauzer yopilib qayta ochilsa ham kirgan holat qoladi</span>
+            </li>
+<li class="task ">
+              <span class="task__box" aria-hidden="true"></span>
+              <span class="task__text">Rollar: Mijoz, Ega, Admin — PRD'dagi huquqlar jadvali bo'yicha</span>
+            </li>
+<li class="task ">
+              <span class="task__box" aria-hidden="true"></span>
+              <span class="task__text">Himoyalangan sahifalar: /kabinet mijozga, /ega egaga, /admin adminga</span>
+            </li>
+<li class="task ">
+              <span class="task__box" aria-hidden="true"></span>
+              <span class="task__text">Mijoz kabineti: o'z bronlari va ularning holati</span>
+            </li>
+<li class="task ">
+              <span class="task__box" aria-hidden="true"></span>
+              <span class="task__text">Ega kabineti: o'z jihozlari, ularning bandligi va kelgan bronlar</span>
+            </li>
+<li class="task ">
+              <span class="task__box" aria-hidden="true"></span>
+              <span class="task__text">Telefon raqamini yashirish: bron tasdiqlanmaguncha mijoz va ega bir-birining raqamini ko'rmaydi</span>
+            </li>
+        </ul>
+
+        <footer class="kartochka__oyoq">
+          <span class="rozetka rozetka--muted"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="2.5 2.5"/></svg> Hisobot yo'q</span>
+          <span class="fayl">sprints/SPRINT-3-auth.md</span>
+        </footer>
+        
+        
+      </article>
+<article class="kartochka kartochka--boshlanmagan">
+        <header class="kartochka__bosh">
+          <div>
+            <h3 class="kartochka__nom">SPRINT 4 — chuqurlik</h3>
+            <p class="kartochka__savol">Haqiqiy hayotda chidaydimi?</p>
+          </div>
+          <span class="chip chip--boshlanmagan"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="2.5 2.5"/></svg> Boshlanmagan</span>
+        </header>
+
+        <p class="kartochka__maqsad">holatlar, bandlik to'qnashuvi, narx va bekor qilish qoidalarini haqiqiy hayotdagidek ishlatish.</p>
+
+        <div class="kartochka__olcham" title="0 / 9 task bajarildi">
+          <div class="meter" role="img" aria-label="SPRINT 4 — chuqurlik: 0 foiz bajarildi">
+          <div class="meter__track"><div class="meter__fill meter__fill--boshlanmagan" style="width:0%"></div></div>
+        </div>
+          <span class="kartochka__foiz">0%</span>
+          <span class="kartochka__nisbat">0 / 9 task</span>
+        </div>
+
+        <ul class="tasklar">
+<li class="task ">
+              <span class="task__box" aria-hidden="true"></span>
+              <span class="task__text">Holatlar zanjiri: So'rov -&gt; Tasdiqlandi -&gt; To'landi -&gt; Yakunlandi, qo'shimcha Rad etildi va Bekor qilindi</span>
+            </li>
+<li class="task ">
+              <span class="task__box" aria-hidden="true"></span>
+              <span class="task__text">Miqdorli bandlik hisobi: 20 ta stuldan 12 tasi band bo'lsa, kalendarda 8 ta bo'sh deb ko'rsatiladi</span>
+            </li>
+<li class="task ">
+              <span class="task__box" aria-hidden="true"></span>
+              <span class="task__text">Band sana kalendarda tanlanmaydigan bo'lishi</span>
+            </li>
+<li class="task ">
+              <span class="task__box" aria-hidden="true"></span>
+              <span class="task__text">Narx hisobi: kunlik tarif x dona x kun soni + platforma komissiyasi</span>
+            </li>
+<li class="task ">
+              <span class="task__box" aria-hidden="true"></span>
+              <span class="task__text">Turkum narx chegaralari: ega chegaradan tashqari narx qo'ya olmaydi</span>
+            </li>
+<li class="task ">
+              <span class="task__box" aria-hidden="true"></span>
+              <span class="task__text">Bekor qilish qoidasi: tadbirdan 72 soat oldin to'liq qaytarish, keyin qaytmaydi</span>
+            </li>
+<li class="task ">
+              <span class="task__box" aria-hidden="true"></span>
+              <span class="task__text">Kechikish jarimasi: har kechikkan kun uchun kunlik tarif qo'shiladi</span>
+            </li>
+<li class="task ">
+              <span class="task__box" aria-hidden="true"></span>
+              <span class="task__text">Onlayn to'lov ulanishi (Payme / Click / Uzum): to'liq summa oldindan, komissiya avtomatik ushlanadi</span>
+            </li>
+<li class="task ">
+              <span class="task__box" aria-hidden="true"></span>
+              <span class="task__text">Chegaraviy holatlar: bo'sh natija, o'tmish sanasi, ombordagidan ko'p son, ruxsatsiz amal</span>
+            </li>
+        </ul>
+
+        <footer class="kartochka__oyoq">
+          <span class="rozetka rozetka--muted"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="2.5 2.5"/></svg> Hisobot yo'q</span>
+          <span class="fayl">sprints/SPRINT-4-chuqurlik.md</span>
+        </footer>
+        
+        
+      </article>
+<article class="kartochka kartochka--boshlanmagan">
+        <header class="kartochka__bosh">
+          <div>
+            <h3 class="kartochka__nom">SPRINT 5 — telegram</h3>
+            <p class="kartochka__savol">Qo'lda turadimi?</p>
+          </div>
+          <span class="chip chip--boshlanmagan"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="2.5 2.5"/></svg> Boshlanmagan</span>
+        </header>
+
+        <p class="kartochka__maqsad">mahsulot Telegram ichida ishlasin va bron holati o'zgarganda o'zi xabar bersin.</p>
+
+        <div class="kartochka__olcham" title="0 / 6 task bajarildi">
+          <div class="meter" role="img" aria-label="SPRINT 5 — telegram: 0 foiz bajarildi">
+          <div class="meter__track"><div class="meter__fill meter__fill--boshlanmagan" style="width:0%"></div></div>
+        </div>
+          <span class="kartochka__foiz">0%</span>
+          <span class="kartochka__nisbat">0 / 6 task</span>
+        </div>
+
+        <ul class="tasklar">
+<li class="task ">
+              <span class="task__box" aria-hidden="true"></span>
+              <span class="task__text">Katalog va bron oqimi Telegram Mini App sifatida ochilishi</span>
+            </li>
+<li class="task ">
+              <span class="task__box" aria-hidden="true"></span>
+              <span class="task__text">Telegram akkauntini telefon raqamiga bog'lash (S3'dagi OTP bilan bir foydalanuvchi)</span>
+            </li>
+<li class="task ">
+              <span class="task__box" aria-hidden="true"></span>
+              <span class="task__text">Bildirishnomalar: so'rov qabul qilindi, admin tasdiqladi, to'lov kutilmoqda, tadbir ertaga</span>
+            </li>
+<li class="task ">
+              <span class="task__box" aria-hidden="true"></span>
+              <span class="task__text">Egaga bildirishnoma: yangi bron so'rovi keldi, bron tasdiqlandi</span>
+            </li>
+<li class="task ">
+              <span class="task__box" aria-hidden="true"></span>
+              <span class="task__text">Zaxira kanal: sayt ishlamaganda bot orqali bron so'rovini qabul qilish</span>
+            </li>
+<li class="task ">
+              <span class="task__box" aria-hidden="true"></span>
+              <span class="task__text">Fon vazifalari: 72 soatlik bekor qilish muddati eslatmasi, tadbiri o'tgan bronni avtomatik &quot;Yakunlandi&quot;ga o'tkazish</span>
+            </li>
+        </ul>
+
+        <footer class="kartochka__oyoq">
+          <span class="rozetka rozetka--muted"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="2.5 2.5"/></svg> Hisobot yo'q</span>
+          <span class="fayl">sprints/SPRINT-5-telegram.md</span>
+        </footer>
+        
+        
+      </article>
+<article class="kartochka kartochka--boshlanmagan">
+        <header class="kartochka__bosh">
+          <div>
+            <h3 class="kartochka__nom">SPRINT 6 — admin</h3>
+            <p class="kartochka__savol">Boshqarib bo'ladimi?</p>
+          </div>
+          <span class="chip chip--boshlanmagan"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="2.5 2.5"/></svg> Boshlanmagan</span>
+        </header>
+
+        <p class="kartochka__maqsad">platformani kod yozmasdan boshqarish — e'lon va bron tasdig'i, egalar nazorati, statistika.</p>
+
+        <div class="kartochka__olcham" title="0 / 7 task bajarildi">
+          <div class="meter" role="img" aria-label="SPRINT 6 — admin: 0 foiz bajarildi">
+          <div class="meter__track"><div class="meter__fill meter__fill--boshlanmagan" style="width:0%"></div></div>
+        </div>
+          <span class="kartochka__foiz">0%</span>
+          <span class="kartochka__nisbat">0 / 7 task</span>
+        </div>
+
+        <ul class="tasklar">
+<li class="task ">
+              <span class="task__box" aria-hidden="true"></span>
+              <span class="task__text">Admin paneli: e'lon so'rovlari va bron so'rovlari bitta navbatda, qidiruv va filtr bilan</span>
+            </li>
+<li class="task ">
+              <span class="task__box" aria-hidden="true"></span>
+              <span class="task__text">E'lonni joylash, tahrirlash, tasdiqlash va rad etish</span>
+            </li>
+<li class="task ">
+              <span class="task__box" aria-hidden="true"></span>
+              <span class="task__text">Bron so'rovini tasdiqlash va rad etish ekrani (sababi bilan)</span>
+            </li>
+<li class="task ">
+              <span class="task__box" aria-hidden="true"></span>
+              <span class="task__text">Egani tasdiqlash va bloklash — hujjatni ko'rish faqat admin uchun</span>
+            </li>
+<li class="task ">
+              <span class="task__box" aria-hidden="true"></span>
+              <span class="task__text">Statistika: haftalik bron soni, aylanma, ushlangan komissiya, eng ko'p bron qilingan turkum</span>
+            </li>
+<li class="task ">
+              <span class="task__box" aria-hidden="true"></span>
+              <span class="task__text">Qo'lda tuzatish: admin bron holatini va sanasini o'zgartira olishi</span>
+            </li>
+<li class="task ">
+              <span class="task__box" aria-hidden="true"></span>
+              <span class="task__text">Egalarni qo'lda kiritish: birinchi tanish egalarni admin o'zi qo'shadi</span>
+            </li>
+        </ul>
+
+        <footer class="kartochka__oyoq">
+          <span class="rozetka rozetka--muted"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="2.5 2.5"/></svg> Hisobot yo'q</span>
+          <span class="fayl">sprints/SPRINT-6-admin.md</span>
+        </footer>
+        
+        
+      </article>
+
+  <h2>Ochiq savollar</h2>
+  <ul class="savollar">
+<li class="savol">
+              <span class="savol__raqam">1</span>
+              <span class="savol__matn">Birinchi 3 oyning muvaffaqiyat metrikasi qaysi raqam?</span>
+              <span class="savol__qachon">S1, doira aniqlanganda</span>
+            </li>
+<li class="savol">
+              <span class="savol__raqam">2</span>
+              <span class="savol__matn">Hozir aynan qaysi platforma ishlatiladi — to'g'ridan-to'g'ri raqobatchi bormi?</span>
+              <span class="savol__qachon">S1, bozor tekshiruvi</span>
+            </li>
+<li class="savol">
+              <span class="savol__raqam">3</span>
+              <span class="savol__matn">Bitta odam bir vaqtda ham mijoz, ham ega bo'la oladimi?</span>
+              <span class="savol__qachon">S3, auth sprintida</span>
+            </li>
+<li class="savol">
+              <span class="savol__raqam">4</span>
+              <span class="savol__matn">Depozit bo'ladimi, qanday hisoblanadi va qaytariladi?</span>
+              <span class="savol__qachon">S4, chuqurlik sprintida</span>
+            </li>
+<li class="savol">
+              <span class="savol__raqam">5</span>
+              <span class="savol__matn">Mobil ilova v1 doirasiga kiradimi?</span>
+              <span class="savol__qachon">S1, doira aniqlanganda</span>
+            </li>
+  </ul>
+
+  <h2>Jadval ko'rinishi</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Sprint</th><th>Holat</th><th class="raqam">Bajarildi</th>
+        <th class="raqam">Jami</th><th class="raqam">Foiz</th><th>Hisobot</th>
+      </tr>
+    </thead>
+    <tbody>
+<tr>
+              <td>SPRINT 1 — kesim</td>
+              <td>Boshlanmagan</td>
+              <td class="raqam">0</td>
+              <td class="raqam">6</td>
+              <td class="raqam">0%</td>
+              <td>Yo'q</td>
+            </tr>
+<tr>
+              <td>SPRINT 2 — xotira</td>
+              <td>Boshlanmagan</td>
+              <td class="raqam">0</td>
+              <td class="raqam">6</td>
+              <td class="raqam">0%</td>
+              <td>Yo'q</td>
+            </tr>
+<tr>
+              <td>SPRINT 3 — auth</td>
+              <td>Boshlanmagan</td>
+              <td class="raqam">0</td>
+              <td class="raqam">7</td>
+              <td class="raqam">0%</td>
+              <td>Yo'q</td>
+            </tr>
+<tr>
+              <td>SPRINT 4 — chuqurlik</td>
+              <td>Boshlanmagan</td>
+              <td class="raqam">0</td>
+              <td class="raqam">9</td>
+              <td class="raqam">0%</td>
+              <td>Yo'q</td>
+            </tr>
+<tr>
+              <td>SPRINT 5 — telegram</td>
+              <td>Boshlanmagan</td>
+              <td class="raqam">0</td>
+              <td class="raqam">6</td>
+              <td class="raqam">0%</td>
+              <td>Yo'q</td>
+            </tr>
+<tr>
+              <td>SPRINT 6 — admin</td>
+              <td>Boshlanmagan</td>
+              <td class="raqam">0</td>
+              <td class="raqam">7</td>
+              <td class="raqam">0%</td>
+              <td>Yo'q</td>
+            </tr>
+    </tbody>
+  </table>
+
+  <footer class="oyoq">
+    Bu fayl qo'lda tahrirlanmaydi — <code>node scripts/progress.js</code> uni
+    sprints/ papkasidan qaytadan yasaydi.<br>
+    Rent · vibecoding plugin bilan yaratilgan · vibecoding.uz
+  </footer>
+</div>
+
+<script type="application/json" id="rent-progress-data">
+{
+  "loyiha": "Rent",
+  "yangilandi": "2026-08-17 09:47 UTC",
+  "git": null,
+  "umumiyFoiz": 0,
+  "jamiTask": 41,
+  "bajarilganTask": 0,
+  "sprintlar": [
+    {
+      "raqam": 1,
+      "nom": "SPRINT 1 — kesim",
+      "holat": "boshlanmagan",
+      "bajarilgan": 0,
+      "jami": 6,
+      "foiz": 0,
+      "hisobotBor": false
+    },
+    {
+      "raqam": 2,
+      "nom": "SPRINT 2 — xotira",
+      "holat": "boshlanmagan",
+      "bajarilgan": 0,
+      "jami": 6,
+      "foiz": 0,
+      "hisobotBor": false
+    },
+    {
+      "raqam": 3,
+      "nom": "SPRINT 3 — auth",
+      "holat": "boshlanmagan",
+      "bajarilgan": 0,
+      "jami": 7,
+      "foiz": 0,
+      "hisobotBor": false
+    },
+    {
+      "raqam": 4,
+      "nom": "SPRINT 4 — chuqurlik",
+      "holat": "boshlanmagan",
+      "bajarilgan": 0,
+      "jami": 9,
+      "foiz": 0,
+      "hisobotBor": false
+    },
+    {
+      "raqam": 5,
+      "nom": "SPRINT 5 — telegram",
+      "holat": "boshlanmagan",
+      "bajarilgan": 0,
+      "jami": 6,
+      "foiz": 0,
+      "hisobotBor": false
+    },
+    {
+      "raqam": 6,
+      "nom": "SPRINT 6 — admin",
+      "holat": "boshlanmagan",
+      "bajarilgan": 0,
+      "jami": 7,
+      "foiz": 0,
+      "hisobotBor": false
+    }
+  ],
+  "ochiqSavollar": [
+    {
+      "raqam": "1",
+      "savol": "Birinchi 3 oyning muvaffaqiyat metrikasi qaysi raqam?",
+      "qachon": "S1, doira aniqlanganda"
+    },
+    {
+      "raqam": "2",
+      "savol": "Hozir aynan qaysi platforma ishlatiladi — to'g'ridan-to'g'ri raqobatchi bormi?",
+      "qachon": "S1, bozor tekshiruvi"
+    },
+    {
+      "raqam": "3",
+      "savol": "Bitta odam bir vaqtda ham mijoz, ham ega bo'la oladimi?",
+      "qachon": "S3, auth sprintida"
+    },
+    {
+      "raqam": "4",
+      "savol": "Depozit bo'ladimi, qanday hisoblanadi va qaytariladi?",
+      "qachon": "S4, chuqurlik sprintida"
+    },
+    {
+      "raqam": "5",
+      "savol": "Mobil ilova v1 doirasiga kiradimi?",
+      "qachon": "S1, doira aniqlanganda"
+    }
+  ]
+}
+</script>
+<script>
+  (function () {
+    var tugma = document.getElementById('mavzu');
+    var ildiz = document.documentElement;
+    var saqlangan = null;
+    try { saqlangan = window.name && window.name.indexOf('theme:') === 0 ? window.name.slice(6) : null; } catch (e) {}
+    if (saqlangan) ildiz.setAttribute('data-theme', saqlangan);
+    tugma.addEventListener('click', function () {
+      var hozir = ildiz.getAttribute('data-theme');
+      var qorongi = hozir === 'dark' ||
+        (hozir !== 'light' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+      var yangi = qorongi ? 'light' : 'dark';
+      ildiz.setAttribute('data-theme', yangi);
+      try { window.name = 'theme:' + yangi; } catch (e) {}
+    });
+  })();
+</script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+#!/bin/sh
+# Rent — pre-commit
+# progress.html ni sprints/ papkasidan qaytadan yasaydi va commitga qo'shadi.
+# Hech qachon to'xtatmaydi.
+
+ILDIZ=$(git rev-parse --show-toplevel)
+cd "$ILDIZ" || exit 0
+
+if ! command -v node >/dev/null 2>&1; then
+  echo "hisobotchi: node topilmadi — progress.html yangilanmadi."
+  exit 0
+fi
+
+if [ ! -f scripts/progress.js ]; then
+  exit 0
+fi
+
+CHIQISH=$(node scripts/progress.js 2>&1)
+HOLAT=$?
+
+if [ $HOLAT -ne 0 ]; then
+  echo "hisobotchi: progress.html yasalmadi —"
+  echo "$CHIQISH"
+  exit 0
+fi
+
+echo "hisobotchi: $CHIQISH"
+git add progress.html 2>/dev/null
+
+exit 0
