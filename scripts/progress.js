@@ -549,16 +549,32 @@ function main() {
   const bajarilgan = sprintlar.reduce((a, s) => a + s.bajarilgan, 0);
   const jami = sprintlar.reduce((a, s) => a + s.jami, 0);
 
+  const ogohlantir = () => {
+    if (!OGOH) return;
+    const hisobotsiz = sprintlar.filter((s) => s.bajarilgan > 0 && !s.hisobotBor);
+    if (!hisobotsiz.length) return;
+    console.log('');
+    console.log('DIQQAT — quyidagi sprintlarda hisobot yozilmagan:');
+    for (const s of hisobotsiz) {
+      console.log(`  - sprints/${s.fayl} (${s.bajarilgan} ta task bajarilgan, hisobot bo'sh)`);
+    }
+    console.log('');
+    console.log('Claude ga "hisobot" deb yozing yoki /hisobot buyrugini bering.');
+    console.log('');
+  };
+
   if (CHECK_ONLY) {
     const eski = fs.existsSync(OUT_FILE) ? fs.readFileSync(OUT_FILE, 'utf8') : '';
     // Yangilanish vaqti har safar o'zgaradi — uni solishtiruvdan chiqaramiz.
     const tozala = (s) => s.replace(/Yangilandi:[^<]*/g, '').replace(/"yangilandi":[^,]*/g, '');
-    if (tozala(eski) !== tozala(yangi)) {
-      console.error('progress: progress.html eskirgan — `node scripts/progress.js` ishga tushiring.');
-      process.exit(1);
-    }
-    console.log('progress: progress.html aktual.');
-    return;
+    const eskirgan = tozala(eski) !== tozala(yangi);
+    console.log(
+      eskirgan
+        ? 'progress: progress.html eskirgan — `node scripts/progress.js` ishga tushiring.'
+        : `progress: progress.html aktual — ${sprintlar.length} sprint, ${bajarilgan}/${jami} task.`
+    );
+    ogohlantir();
+    process.exit(eskirgan ? 1 : 0);
   }
 
   fs.writeFileSync(OUT_FILE, yangi, 'utf8');
@@ -566,20 +582,7 @@ function main() {
     `progress: progress.html yangilandi — ${sprintlar.length} sprint, ${bajarilgan}/${jami} task, ` +
       `${sprintlar.filter((s) => s.hisobotBor).length} hisobot.`
   );
-
-  if (OGOH) {
-    const hisobotsiz = sprintlar.filter((s) => s.bajarilgan > 0 && !s.hisobotBor);
-    if (hisobotsiz.length) {
-      console.log('');
-      console.log('DIQQAT — quyidagi sprintlarda hisobot yozilmagan:');
-      for (const s of hisobotsiz) {
-        console.log(`  - sprints/${s.fayl} (${s.bajarilgan} ta task bajarilgan, hisobot bo'sh)`);
-      }
-      console.log('');
-      console.log('            Claude ga "hisobot" deb yozing yoki /hisobot buyrugini bering.');
-      console.log('');
-    }
-  }
+  ogohlantir();
 }
 
 main();

@@ -1,8 +1,12 @@
 #!/bin/sh
 # Rent — pre-push
-# 1. progress.html ni sprints/ papkasidan qaytadan yasaydi
-# 2. Bajarilgan taski bor-u hisoboti yo'q sprintlarni sanab beradi
+# Faqat TEKSHIRADI, hech narsa yozmaydi:
+#   1. progress.html sprint fayllariga mos keladimi
+#   2. Bajarilgan taski bor-u hisoboti yo'q sprintlar bormi
 # Hech qachon to'xtatmaydi — faqat ogohlantiradi.
+#
+# Nega yozmaydi: push paytida yaratilgan fayl baribir shu pushga tushmaydi,
+# faqat ish papkasini "iflos" qilib qo'yadi. Yozish pre-commit ishi.
 
 ILDIZ=$(git rev-parse --show-toplevel 2>/dev/null) || exit 0
 cd "$ILDIZ" || exit 0
@@ -10,12 +14,6 @@ cd "$ILDIZ" || exit 0
 command -v node >/dev/null 2>&1 || exit 0
 [ -f scripts/progress.js ] || exit 0
 
-node scripts/progress.js --ogoh 2>&1 | sed 's/^/hisobotchi: /'
-
-# progress.html commit qilinmagan bo'lsa — eslat
-if ! git diff --quiet -- progress.html 2>/dev/null; then
-  echo "hisobotchi: progress.html yangilandi, lekin commit qilinmagan."
-  echo "hisobotchi: git add progress.html && git commit --amend --no-edit"
-fi
+node scripts/progress.js --check --ogoh 2>&1 | sed 's/^/hisobotchi: /'
 
 exit 0
