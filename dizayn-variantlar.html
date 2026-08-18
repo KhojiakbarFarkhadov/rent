@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rent — dizayn tizimi variantlari</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@600;700&family=Archivo:wght@600;700&family=Lora:wght@600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 32px 20px 72px;
+    background: #eceded; color: #16181a;
+    font: 15px/1.55 Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  .wrap { max-width: 1180px; margin: 0 auto; }
+  h1 { font-size: 22px; font-weight: 600; margin: 0 0 4px; letter-spacing: -0.01em; }
+  .lead { color: #5c6166; font-size: 14px; margin: 0 0 28px; max-width: 70ch; }
+
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  @media (max-width: 980px) { .grid { grid-template-columns: 1fr; } }
+
+  .variant { border-radius: 16px; overflow: hidden; border: 1px solid rgba(0,0,0,.08); }
+  .variant__head { padding: 18px 20px 16px; border-bottom: 1px solid rgba(0,0,0,.07); }
+  .variant__name { font-size: 17px; font-weight: 700; margin: 0 0 6px; }
+  .variant__line { font-size: 13px; line-height: 1.5; margin: 0; opacity: .78; }
+  .variant__body { padding: 20px; display: grid; gap: 20px; }
+
+  .swatches { display: flex; gap: 6px; }
+  .sw { flex: 1; border-radius: 8px; padding: 8px 6px 7px; font-size: 10px; line-height: 1.3;
+        border: 1px solid rgba(0,0,0,.10); text-align: center; }
+  .sw b { display: block; font-weight: 600; font-size: 10px; }
+  .sw span { opacity: .7; font-size: 9px; letter-spacing: .02em; }
+
+  .label { font-size: 10px; text-transform: uppercase; letter-spacing: .1em; opacity: .5; margin-bottom: 7px; }
+
+  .specimen__h { margin: 0 0 4px; }
+  .specimen__p { margin: 0; font-size: 13px; opacity: .75; }
+
+  /* namuna kartochka — dizayn-tz M-02 */
+  .card { overflow: hidden; }
+  .card__img { height: 96px; background: linear-gradient(135deg, #c9cfd4, #aab3ba); }
+  .card__in { padding: 12px 13px 13px; }
+  .card__title { font-size: 14px; font-weight: 600; margin: 0 0 2px; }
+  .card__meta { font-size: 11.5px; margin: 0 0 9px; }
+  .card__row { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin-bottom: 11px; }
+  .card__price { font-size: 17px; font-weight: 700; }
+  .card__price small { font-size: 11px; font-weight: 500; opacity: .7; }
+  .card__free { font-size: 11.5px; white-space: nowrap; }
+  .btn { display: block; width: 100%; text-align: center; padding: 10px 12px;
+         font: inherit; font-size: 13px; font-weight: 600; border: 0; cursor: default; }
+
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip { font-size: 11px; padding: 5px 10px; border-radius: 999px; font-weight: 500; }
+
+  .radius-note { font-size: 11.5px; opacity: .7; }
+  .radius-demo { display: flex; gap: 8px; align-items: flex-end; margin-top: 8px; }
+  .radius-demo i { display: block; width: 34px; height: 34px; border: 1px solid rgba(0,0,0,.25); font-style: normal; }
+
+  /* ---------- A ---------- */
+  .vA { background: #F1F5F9; color: #0F172A; }
+  .vA .variant__head { background: #fff; }
+  .vA .variant__name, .vA h3 { font-family: Manrope, Inter, sans-serif; }
+  .vA .card { background: #fff; border-radius: 16px; box-shadow: 0 2px 8px rgba(15,23,42,.06); }
+  .vA .card__img { border-radius: 12px 12px 0 0; }
+  .vA .card__meta, .vA .card__free { color: #5B6B7F; }
+  .vA .card__price { color: #0F172A; }
+  .vA .btn { background: #1B6BD6; color: #fff; border-radius: 12px; }
+  .vA .chip--1 { background: #E7EBF0; color: #5B6B7F; }
+  .vA .chip--2 { background: #1B6BD6; color: #fff; }
+  .vA .chip--3 { background: #0E7C55; color: #fff; }
+  .vA .chip--4 { background: #E7EBF0; color: #0F172A; }
+  .vA .radius-demo i { border-radius: 16px; }
+
+  /* ---------- B ---------- */
+  .vB { background: #F7F7F4; color: #14140F; }
+  .vB .variant__head { background: #fff; }
+  .vB .variant__name, .vB h3 { font-family: Archivo, Inter, sans-serif; letter-spacing: -.02em; }
+  .vB .card { background: #fff; border-radius: 8px; border: 1px solid rgba(20,20,15,.12); }
+  .vB .card__img { border-radius: 7px 7px 0 0; }
+  .vB .card__meta, .vB .card__free { color: #63635A; }
+  .vB .btn { background: #C8F04E; color: #14140F; border-radius: 999px; }
+  .vB .chip--1 { background: transparent; color: #63635A; box-shadow: inset 0 0 0 1px rgba(20,20,15,.25); }
+  .vB .chip--2 { background: #14140F; color: #fff; }
+  .vB .chip--3 { background: #C8F04E; color: #14140F; }
+  .vB .chip--4 { background: transparent; color: #14140F; box-shadow: inset 0 0 0 1px rgba(20,20,15,.25); }
+  .vB .radius-demo i { border-radius: 8px; }
+
+  /* ---------- C ---------- */
+  .vC { background: #FBF6EE; color: #241C16; }
+  .vC .variant__head { background: #fff; }
+  .vC .variant__name, .vC h3 { font-family: Lora, Georgia, serif; }
+  .vC .card { background: #fff; border-radius: 14px; border: 1px solid rgba(36,28,22,.08); }
+  .vC .card__img { border-radius: 13px 13px 0 0; }
+  .vC .card__meta, .vC .card__free { color: #6B5B4E; }
+  .vC .card__price { color: #C24A32; }
+  .vC .btn { background: #C24A32; color: #fff; border-radius: 10px; }
+  .vC .chip--1 { background: #F1E8DB; color: #6B5B4E; }
+  .vC .chip--2 { background: #C24A32; color: #fff; }
+  .vC .chip--3 { background: #1F6B54; color: #fff; }
+  .vC .chip--4 { background: #F1E8DB; color: #241C16; }
+  .vC .radius-demo i { border-radius: 14px; }
+
+  footer { margin-top: 28px; font-size: 12px; color: #6b7076; text-align: center; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>Rent — dizayn tizimi: uchta variant</h1>
+  <p class="lead">
+    Har uch variantda bir xil element ko'rsatilgan: katalog kartochkasi (dizayn-tz M-02)
+    va bron holatlari qatori (PRD 8-bo'lim). Farqni shu yerdan ko'rish oson —
+    matnda emas, bir xil vazifadagi elementda. Bittasini tanlang, aralashtirmang.
+  </p>
+
+  <div class="grid">
+
+    <!-- A -->
+    <section class="variant vA">
+      <div class="variant__head">
+        <h2 class="variant__name">A — Ishonchli ko'k</h2>
+        <p class="variant__line">Bankning ilovasidek tanish va xavfsiz — mijoz kartasini chiqarishdan qo'rqmaydi, lekin mahsulot esda qoladigan yuzga ega bo'lmaydi.</p>
+      </div>
+      <div class="variant__body">
+
+        <div>
+          <div class="label">Ranglar</div>
+          <div class="swatches">
+            <div class="sw" style="background:#F1F5F9"><b>Fon</b><span>F1F5F9</span></div>
+            <div class="sw" style="background:#FFFFFF"><b>Sirt</b><span>FFFFFF</span></div>
+            <div class="sw" style="background:#1B6BD6;color:#fff;border-color:transparent"><b>Asosiy</b><span>1B6BD6</span></div>
+            <div class="sw" style="background:#0F172A;color:#fff;border-color:transparent"><b>Matn</b><span>0F172A</span></div>
+          </div>
+        </div>
+
+        <div>
+          <div class="label">Tipografiya — Manrope + Inter</div>
+          <h3 class="specimen__h" style="font-size:19px;font-weight:700">Banket stol, 180 sm</h3>
+          <p class="specimen__p">Toshkent, Yunusobod tumani · 12 ta bo'sh</p>
+        </div>
+
+        <div>
+          <div class="label">Katalog kartochkasi (M-02)</div>
+          <div class="card">
+            <div class="card__img"></div>
+            <div class="card__in">
+              <p class="card__title">Plastik stul, oq</p>
+              <p class="card__meta">Anvar aka · 4.8 ★ · Chilonzor</p>
+              <div class="card__row">
+                <span class="card__price">12 000 <small>so'm / kun</small></span>
+                <span class="card__free">8 ta bo'sh</span>
+              </div>
+              <button class="btn">Savatga qo'shish</button>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="label">Bron holatlari</div>
+          <div class="chips">
+            <span class="chip chip--1">So'rov</span>
+            <span class="chip chip--2">Tasdiqlandi</span>
+            <span class="chip chip--3">To'landi</span>
+            <span class="chip chip--4">Yakunlandi</span>
+          </div>
+        </div>
+
+        <div>
+          <div class="label">Burchak radiusi</div>
+          <div class="radius-note">Kartochka 16px · tugma 12px · chip tabletka</div>
+          <div class="radius-demo"><i></i><i style="border-radius:12px"></i><i style="border-radius:999px"></i></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- B -->
+    <section class="variant vB">
+      <div class="variant__head">
+        <h2 class="variant__name">B — Arxitektura oq</h2>
+        <p class="variant__line">Dizayn studiyasining saytidek qat'iy va zamonaviy — mahsulot arzon vositachi emas, jiddiy platforma degan taassurot beradi.</p>
+      </div>
+      <div class="variant__body">
+
+        <div>
+          <div class="label">Ranglar</div>
+          <div class="swatches">
+            <div class="sw" style="background:#F7F7F4"><b>Fon</b><span>F7F7F4</span></div>
+            <div class="sw" style="background:#FFFFFF"><b>Sirt</b><span>FFFFFF</span></div>
+            <div class="sw" style="background:#C8F04E"><b>Urg'u</b><span>C8F04E</span></div>
+            <div class="sw" style="background:#14140F;color:#fff;border-color:transparent"><b>Siyoh</b><span>14140F</span></div>
+          </div>
+          <p class="radius-note" style="margin:8px 0 0">
+            Laym oq fonda 1.31 kontrast beradi — matn yoki ikonka rangi bo'la olmaydi,
+            faqat to'ldirish. Havolalar siyoh rangida.
+          </p>
+        </div>
+
+        <div>
+          <div class="label">Tipografiya — Archivo + Inter</div>
+          <h3 class="specimen__h" style="font-size:19px;font-weight:700">Banket stol, 180 sm</h3>
+          <p class="specimen__p">Toshkent, Yunusobod tumani · 12 ta bo'sh</p>
+        </div>
+
+        <div>
+          <div class="label">Katalog kartochkasi (M-02)</div>
+          <div class="card">
+            <div class="card__img"></div>
+            <div class="card__in">
+              <p class="card__title">Plastik stul, oq</p>
+              <p class="card__meta">Anvar aka · 4.8 ★ · Chilonzor</p>
+              <div class="card__row">
+                <span class="card__price">12 000 <small>so'm / kun</small></span>
+                <span class="card__free">8 ta bo'sh</span>
+              </div>
+              <button class="btn">Savatga qo'shish</button>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="label">Bron holatlari</div>
+          <div class="chips">
+            <span class="chip chip--1">So'rov</span>
+            <span class="chip chip--2">Tasdiqlandi</span>
+            <span class="chip chip--3">To'landi</span>
+            <span class="chip chip--4">Yakunlandi</span>
+          </div>
+        </div>
+
+        <div>
+          <div class="label">Burchak radiusi</div>
+          <div class="radius-note">Kartochka 8px · tugma va chip tabletka</div>
+          <div class="radius-demo"><i></i><i style="border-radius:8px"></i><i style="border-radius:999px"></i></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- C -->
+    <section class="variant vC">
+      <div class="variant__head">
+        <h2 class="variant__name">C — Bayram</h2>
+        <p class="variant__line">Mahalliy va issiq, to'y tayyorgarligining o'zidek — mijoz bu platformani chet el mahsuloti emas, o'ziniki deb his qiladi.</p>
+      </div>
+      <div class="variant__body">
+
+        <div>
+          <div class="label">Ranglar</div>
+          <div class="swatches">
+            <div class="sw" style="background:#FBF6EE"><b>Fon</b><span>FBF6EE</span></div>
+            <div class="sw" style="background:#C24A32;color:#fff;border-color:transparent"><b>Asosiy</b><span>C24A32</span></div>
+            <div class="sw" style="background:#1F6B54;color:#fff;border-color:transparent"><b>Ikkinchi</b><span>1F6B54</span></div>
+            <div class="sw" style="background:#241C16;color:#fff;border-color:transparent"><b>Matn</b><span>241C16</span></div>
+          </div>
+        </div>
+
+        <div>
+          <div class="label">Tipografiya — Lora + Inter</div>
+          <h3 class="specimen__h" style="font-size:19px;font-weight:600">Banket stol, 180 sm</h3>
+          <p class="specimen__p">Toshkent, Yunusobod tumani · 12 ta bo'sh</p>
+        </div>
+
+        <div>
+          <div class="label">Katalog kartochkasi (M-02)</div>
+          <div class="card">
+            <div class="card__img"></div>
+            <div class="card__in">
+              <p class="card__title">Plastik stul, oq</p>
+              <p class="card__meta">Anvar aka · 4.8 ★ · Chilonzor</p>
+              <div class="card__row">
+                <span class="card__price">12 000 <small>so'm / kun</small></span>
+                <span class="card__free">8 ta bo'sh</span>
+              </div>
+              <button class="btn">Savatga qo'shish</button>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="label">Bron holatlari</div>
+          <div class="chips">
+            <span class="chip chip--1">So'rov</span>
+            <span class="chip chip--2">Tasdiqlandi</span>
+            <span class="chip chip--3">To'landi</span>
+            <span class="chip chip--4">Yakunlandi</span>
+          </div>
+        </div>
+
+        <div>
+          <div class="label">Burchak radiusi</div>
+          <div class="radius-note">Kartochka 14px · tugma 10px · chip tabletka</div>
+          <div class="radius-demo"><i></i><i style="border-radius:10px"></i><i style="border-radius:999px"></i></div>
+        </div>
+
+      </div>
+    </section>
+
+  </div>
+
+  <footer>
+    Barcha matn kontrastlari WCAG bo'yicha hisoblab tekshirilgan · batafsil izoh — dizayn-tizim-variantlar.md<br>
+    Rent · vibecoding plugin bilan yaratilgan · vibecoding.uz
+  </footer>
+
+</div>
+</body>
+</html>
